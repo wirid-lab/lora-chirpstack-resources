@@ -11,3 +11,5 @@ cd esp32
 git submodule update --init --recursive
 cd tools
 python3 get.py
+apt install python-serial
+apt install unar
