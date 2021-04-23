@@ -67,15 +67,15 @@ SSD1306 display(OLED_RST);
 // LoRaWAN NwkSKey, network session key
 // This is the default Semtech key, which is used by the early prototype TTN
 // network.
-static const PROGMEM u1_t NWKSKEY[16] = { 0xce, 0x03, 0x76, 0xe3, 0x79, 0x65, 0x78, 0xd5, 0x7e, 0x32, 0x8a, 0x05, 0xcf, 0x41, 0x97, 0x7c };
+static const PROGMEM u1_t NWKSKEY[16] = { 0xfd, 0x62, 0x38, 0x93, 0x1e, 0x63, 0xb4, 0x18, 0xaf, 0x69, 0xb8, 0xd3, 0xd4, 0x42, 0x44, 0xa5};
 
 // LoRaWAN AppSKey, application session key
 // This is the default Semtech key, which is used by the early prototype TTN
 // network.
-static const u1_t PROGMEM APPSKEY[16] = { 0x52, 0x0c, 0x65, 0x61, 0xb1, 0xa1, 0xdc, 0x17, 0x07, 0xf9, 0x2b, 0x23, 0xfd, 0x2a, 0xbf, 0xf4 };
+static const u1_t PROGMEM APPSKEY[16] = { 0x9b, 0x27, 0x68, 0xd7, 0x9a, 0x0a, 0xff, 0xba, 0x18, 0x5f, 0xe4, 0x55, 0x48, 0xf5, 0x6b, 0xeb};
 
 // LoRaWAN end-device address (DevAddr)
-static const u4_t DEVADDR = 0x01586114 ; // <-- Change this address for every node!
+static const u4_t DEVADDR = 0x0164f060; // <-- Change this address for every node!
 
 // These callbacks are only used in over-the-air activation, so they are
 // left empty here (we cannot leave them out completely unless
@@ -193,7 +193,10 @@ void do_send(osjob_t* j){
     if (LMIC.opmode & OP_TXRXPEND) {
         Serial.println(F("OP_TXRXPEND, not sending"));
     } else {
-        // read the temperature from the DHT22
+
+
+
+// read the temperature from the DHT22
         float temperature = dht.readTemperature();
         Serial.print("Temperature: "); Serial.print(temperature);
         Serial.println(" *C");
@@ -217,6 +220,8 @@ void do_send(osjob_t* j){
         payload[0] = tempLow;
         payload[1] = tempHigh;
 
+
+        
         // float -> int
         uint16_t payloadHumid = LMIC_f2sflt16(rHumidity);
         // int -> bytes
@@ -224,10 +229,15 @@ void do_send(osjob_t* j){
         byte humidHigh = highByte(payloadHumid);
         payload[2] = humidLow;
         payload[3] = humidHigh;
+
+        for (byte i = 0; i < 5; i = i + 1) {
+        Serial.println(payload[i]);
         // Prepare upstream data transmission at the next possible time.
         LMIC_setTxData2(1, payload, sizeof(payload)-1, 0);
         //LMIC_setTxData2(1, mydata, sizeof(mydata)-1, 0);
         Serial.println(F("EV_TXSTART"));
+         }
+        
     }
     // Next TX is scheduled after TX_COMPLETE event.
 }
